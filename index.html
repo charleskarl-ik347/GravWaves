@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fourier Analysis of Gravitational Waves</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <nav class="top-nav">
+        <a href="https://charleskarl-ik347.github.io/" class="back-link">
+            ← Back to Main Website
+        </a>
+    </nav>
+</head>
+<body>
+    <header class="hero">
+        <p class="eyebrow">Originally an AP Calc Project</p>
+
+        <h1>Fourier Analysis of Gravitational Waves</h1>
+        <p>
+            A browser based simulation that describes the Fourier analysis of a gravitational wave signal. The signal is generated to mimic the behavior of a real gravitational wave, and the Fourier transform is used to analyse its frequency components.
+        </p>
+    </header>
+
+    <main>
+        <section class="analysis-section">
+            <div class="section-header">
+                <p class="eyebrow">Signal Input</p>
+                <h2>Select or generate strain data</h2>
+            </div>
+
+            <div class="section-body">
+                <div class="control-group">
+                    <label for="frequency">Starting Frequency</label>
+                    <input type="number" id="frequency" value="30">
+                    <span>Hz</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="duration">Duration</label>
+                    <input type="number" id="duration" value="1">
+                    <span>s</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="sample-rate">Sample Rate</label>
+                    <input type="number" id="sample-rate" value="1024">
+                    <span>Hz</span>
+                </div>
+                <div class="control-group">
+                    <label for="lowCut">Low Cutoff</label>
+                    <input type="range" id="lowCut" min="0" max="300" value="30">
+                    <span><span id="lowValue">30</span> Hz</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="highCut">High Cutoff</label>
+                    <input type="range" id="highCut" min="0" max="300" value="150">
+                    <span><span id="highValue">150</span> Hz</span>
+                </div>
+                
+                <button id="run-analysis">Run Analysis</button>
+            </div>
+        </section>
+
+        <section class="analysis-section">
+            <div class="section-header">
+                <p class="eyebrow">Time Domain</p>
+                <h2>Raw Gravitational wave strain over time</h2>
+            </div>
+            <div class="plot-area" id="rawPlot"></div>
+        </section>
+        <section class="analysis-section">
+            <div class="section-header">   
+                <p class="eyebrow">Frequency Domain</p>
+                <h2>Fourier Transform of the strain signal</h2>
+            </div>
+            <div class="plot-area" id="spectrumPlot"></div>
+        </section>
+        <section class="analysis-section">
+            <div class="section-header">
+                <p class="eyebrow">Filtered Time-Domain Reconstruction</p>
+                <h2>Filtered Fourier Transform of the strain signal</h2>
+            </div>
+            <div class="plot-area" id="filteredPlot"></div>
+        </section>
+        <!--Dummy explanations-->
+        <section class="analysis-section" id="explanation">
+            <div class="section-header">
+                <p class="eyebrow">Mathematical Idea</p>
+                <h2>Why Fourier analysis is useful</h2>
+            </div>
+
+            <div class="explanation">
+                <p>
+                    A gravitational wave signal changes over time, so the time-domain graph shows how
+                    strain varies as the wave passes through a detector. The Fourier transform converts
+                    this time-based signal into the frequency domain, allowing us to identify which
+                    frequencies dominate the signal.
+                </p>
+
+                <p>
+                    In real gravitational wave detection, this is important because compact binary mergers 
+                    creates chirp signals. The frequency and amplitude increase as the objects spiral
+                    closer together.
+                </p>
+                <h2> Summary</h2>
+                <p class="formula">h(t) → H(f) → filtered H(f) → reconstructed h(t)</p>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-section social">
+                    <h4>Connect</h4>
+                    <ul class="social-links">
+                        <li><a href="https://github.com/charleskarl-ik347" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+                        <li>
+                            <a href="https://charleskarl-ik347.github.io/" target="_blank">
+                                <i class="fa-solid fa-globe"></i> Main Website
+                            </a>
+                        </li>
+                    </ul>
+                    
+                </div>
+
+                <div class="footer-section motto">
+                    <p><em>“Curiosity in motion.”</em></p>
+                    <p>&copy; 2026 Charles (K@sak). All rights reserved.</p>
+                </div>
+            </div>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>
