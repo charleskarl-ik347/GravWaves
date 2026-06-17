@@ -1,14 +1,28 @@
+from pathlib import Path
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from analysis import run_fourier_analysis
 
-app = Flask(__name__, static_folder=".", static_url_path="")
+BASE_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = BASE_DIR.parent
+
+app = Flask(__name__)
 CORS(app)
 
 
 @app.route("/")
 def home():
-    return send_from_directory(".", "index.html")
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+
+@app.route("/style.css")
+def style():
+    return send_from_directory(FRONTEND_DIR, "style.css")
+
+
+@app.route("/app.js")
+def javascript():
+    return send_from_directory(FRONTEND_DIR, "app.js")
 
 
 @app.route("/api/analyze")
