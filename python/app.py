@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
@@ -5,9 +7,13 @@ from analysis import run_fourier_analysis
 from gwosc import list_wave_files
 
 
+PYTHON_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = PYTHON_DIR.parent
+
+
 app = Flask(
     __name__,
-    static_folder=".",
+    static_folder=str(FRONTEND_DIR),
     static_url_path=""
 )
 
@@ -16,7 +22,10 @@ CORS(app)
 
 @app.route("/")
 def home():
-    return send_from_directory(".", "index.html")
+    return send_from_directory(
+        FRONTEND_DIR,
+        "index.html"
+    )
 
 
 @app.route("/api/files")
@@ -72,11 +81,6 @@ def analyze():
         return jsonify({
             "error": str(error)
         }), 404
-
-    except ValueError as error:
-        return jsonify({
-            "error": str(error)
-        }), 400
 
     except Exception as error:
         print(
