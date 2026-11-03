@@ -13,49 +13,29 @@ app = Flask(
 
 CORS(app)
 
-#frontend
 
 @app.route("/")
 def home():
-    return send_from_directory(FRONTEND_DIR, "index.html")
+    return send_from_directory(".", "index.html")
 
-
-@app.route("/style.css")
-def style():
-    return send_from_directory(FRONTEND_DIR, "style.css")
-
-
-@app.route("/app.js")
-def javascript():
-    return send_from_directory(FRONTEND_DIR, "app.js")
-
-#list file
 
 @app.route("/api/files")
 def files():
-
-    wave_files = list_wave_files()
-
     return jsonify({
-        "files": wave_files
+        "files": list_wave_files()
     })
-#analyse file
+
 
 @app.route("/api/analyze")
 def analyze():
-
     filename = request.args.get("file")
 
     if not filename:
-
         return jsonify({
-            "error":
-            "No gravitational-wave file was selected."
+            "error": "No gravitational-wave file was selected."
         }), 400
 
-
     try:
-
         low_cut = float(
             request.args.get("low", 25)
         )
@@ -65,23 +45,21 @@ def analyze():
         )
 
     except ValueError:
-
         return jsonify({
-            "error":
-            "Cutoff frequencies must be numeric."
+            "error": "Cutoff frequencies must be numeric."
         }), 400
 
+    if low_cut < 0:
+        return jsonify({
+            "error": "Low cutoff cannot be negative."
+        }), 400
 
     if low_cut >= high_cut:
-
         return jsonify({
-            "error":
-            "Low cutoff must be lower than high cutoff."
+            "error": "Low cutoff must be lower than high cutoff."
         }), 400
 
-
     try:
-
         result = run_fourier_analysis(
             filename=filename,
             low_cut=low_cut,
@@ -90,26 +68,28 @@ def analyze():
 
         return jsonify(result)
 
-
     except FileNotFoundError as error:
-
         return jsonify({
             "error": str(error)
         }), 404
 
+    except ValueError as error:
+        return jsonify({
+            "error": str(error)
+        }), 400
 
     except Exception as error:
-
-        print(error)
+        print(
+            f"Analysis error: "
+            f"{type(error).__name__}: {error}"
+        )
 
         return jsonify({
-            "error":
-            "An error occurred during gravitational-wave analysis."
+            "error": "An error occurred during gravitational-wave analysis."
         }), 500
-#Run app
+
 
 if __name__ == "__main__":
-
     app.run(
         debug=True,
         port=4092
