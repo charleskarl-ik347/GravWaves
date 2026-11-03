@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
@@ -18,7 +17,17 @@ CORS(app)
 
 @app.route("/")
 def home():
-    return send_from_directory(".", "index.html")
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+
+@app.route("/style.css")
+def style():
+    return send_from_directory(FRONTEND_DIR, "style.css")
+
+
+@app.route("/app.js")
+def javascript():
+    return send_from_directory(FRONTEND_DIR, "app.js")
 
 #list file
 
