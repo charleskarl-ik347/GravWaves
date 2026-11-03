@@ -1,39 +1,93 @@
+const API_BASE = "";
+async function loadWaveFiles() {
+    const selector =
+        document.getElementById("wave-file");
+    try {
+        const response = await fetch(
+            `${API_BASE}/api/files`
+        );
+        if (!response.ok) {
+            throw new Error(
+                "Could not load wave files."
+            );
+        }
+        const data = await response.json();
+        selector.innerHTML = "";
+        if (data.files.length === 0) {
+            const option = document.createElement("option");
+            option.textContent = "No HDF5 files available";
+            option.value = "";
+            selector.appendChild(option);
+            return;
+        }
+        for (const filename of data.files) {
+            const option = document.createElement("option");
+            option.value = filename;
+            option.textContent = filename;
+            selector.appendChild(option);
+        }
+    } catch (error) {
+        console.error(error);
+        selector.innerHTML =
+            "<option>Unable to load files</option>";
+    }
+}
 async function runAnalysis() {
+    const fileSelector = document.getElementById("wave-file");
     const lowCutInput = document.getElementById("lowCut");
     const highCutInput = document.getElementById("highCut");
-
     const lowValue = document.getElementById("lowValue");
     const highValue = document.getElementById("highValue");
-
+    const filename = fileSelector.value;
     const lowCut = Number(lowCutInput.value);
     const highCut = Number(highCutInput.value);
-
     lowValue.textContent = lowCut;
     highValue.textContent = highCut;
-
+    if (!filename) {
+        alert("Please select a gravitational-wave dataset.");
+        return;
+    }
     if (lowCut >= highCut) {
         alert("Low cutoff must be smaller than high cutoff.");
         return;
     }
-
     try {
-        const response = await fetch(
-            `/api/analyze?low=${lowCut}&high=${highCut}`
-        );
-
+        const params =
+            new URLSearchParams({
+                file: filename,
+                low: lowCut,
+                high: highCut
+            });
+        const response = await fetch(`${API_BASE}/api/analyze?${params}`);
         if (!response.ok) {
-            throw new Error("Python backend did not respond correctly.");
+            const errorData = await response.json();
+            throw new Error(
+                errorData.error || "Python backend returned an error."
+            );
         }
-
         const data = await response.json();
-
-        plotRaw(data.time, data.raw_signal);
-        plotSpectrum(data.frequencies, data.magnitude, lowCut, highCut);
-        plotFiltered(data.time, data.raw_signal, data.reconstructed_signal);
-
+        console.log(
+            "Analyzing:",
+            data.filename
+        );
+        plotRaw(
+            data.time,
+            data.raw_signal
+        );
+        plotSpectrum(
+            data.frequencies,
+            data.magnitude,
+            lowCut,
+            highCut
+        );
+        plotFiltered(
+            data.time,
+            data.raw_signal,
+            data.reconstructed_signal
+        );
     } catch (error) {
         console.error(error);
-        alert("Could not connect to the Python backend. Make sure python app.py is running.");
+        alert(error.message);
     }
 }
 
@@ -224,4 +278,4 @@ function setupControls() {
 }
 
 setupControls();
-runAnalysis();
+loadWaveFiles();
